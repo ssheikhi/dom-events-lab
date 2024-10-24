@@ -1,61 +1,64 @@
-/*-------------------------------- Constants --------------------------------*/
 const buttons = document.querySelectorAll('.button');
-const calculator = document.querySelector('#calculator');
-const display = document.querySelector('.display ')
-const buttonNumber = document.querySelectorAll('.button number')
-/*-------------------------------- Variables --------------------------------*/
+const display = document.querySelector('.display');
 
-let number = undefined
-let number2 = undefined
-let operator = ""
+let number1 = null;
+let number2 = null;
+let operator = "";
 
- 
-function calculate(number,number2, operator){
-    console.log('we are in calculate function')
-    switch(operator) {
+
+// Function to perform calculations based on the operator
+function calculate(number1, number2, operator) {
+    switch (operator) {
         case "+":
-           display.innerText =  number + number2;
-           console.log(`this is the display.innerText : ${display.innerText}`)
-           break;
+            return number1 + number2;
         case "-":
-            display.innerText =  number - number2;
-            break;
+            return number1 - number2;
         case "/":
-            display.innerText =  number / number2;
-            break;
+            return number1 / number2
         case "*":
-            display.innerText =  number * number2;
-            break;
+            return number1 * number2;
+        default:
+            return null;
     }
-    //clear variables
-    number = undefined;
-    number2 = undefined ;
-    operator = "";
 }
 
-// building calculation functionality
+function resetFunction(){
+    // console.log(`in reset function`);
+    number1 = null;
+    number2 = null;
+    operator = "";
+}
+// Event listener for buttons
 buttons.forEach((button) => {
-    console.log(`for each function`);
     button.addEventListener('click', (event) => {
-        console.log(`first step number is ${number}`)
-        display.innerText = button.innerText
+        const buttonValue = event.target.innerText;
+        console.log(`buttonValue is ${buttonValue}`);        
 
-        if (event.target.classList.contains('number') && number === undefined) {
-            number = Number(button.innerText)
-            console.log(`number is ${number}`)
+        if (event.target.classList.contains('number')) {
+            if (operator === "") {
+                // If there's no operator yet, assign to number1
+                number1 = Number(buttonValue);
+                display.innerText = number1;
+            } else {
+                // If there's an operator, assign to number2
+                number2 = Number(buttonValue);
+                display.innerText = number2;
+            }            
         }
-        else if(event.target.classList.contains('number')){
-            console.log(`first step number2 is ${number2}`)
-            number2 = Number(button.innerText)
-            console.log(`number2 is ${number2}`)
+        else if(buttonValue === 'C'){
+            display.innerText ="";
+            resetFunction(); 
         }
         else if (event.target.classList.contains('operator')) {
-             operator = button.innerText
-             console.log(`operator is ${operator}`)
-        }
-        else if (event.target.classList.contains('equals')) {
-            console.log(`in if operator ${operator}`)
-            calculate(number,number2, operator);
-        }
-    })
-})
+            operator = buttonValue;
+        } 
+        else if (event.target.classList.contains('equals') && number1 !== null && number2 !== null) {
+            const result = calculate(number1, number2, operator);
+            display.innerText = result;
+
+            // Reset for the next calculation
+            resetFunction()
+        } 
+
+    });
+});
